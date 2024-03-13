@@ -1,78 +1,59 @@
 name: KernelSU Workflow
-
-on: [push] # 你可以根据需要修改触发条件
+on:
+  workflow_dispatch:
+    inputs:
+      kernel_version:
+        description: 'Enter the kernel version'
+        required: true
+        default: ''
+      boot_input:
+        description: 'Enter the boot file URL'
+        required: true
+        default: ''
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # 使用最新版的Ubuntu作为运行环境
-
+  download_artifacts:
+    runs-on: ubuntu-latest
     steps:
-    - name: Set up kernel version input
-      id: kernel_version
-      run: echo "::set-output name=version::$(echo${{ github.event.inputs.kernel_version }})" # 设置输入值
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-    - name: Create patched file variable
-      id: patched_file
-      run: echo "::set-output name=patched_file::${{ steps.kernel_version.outputs.version }}_kernelsu.ko" # 创建变量
+    - name: Download KSUD and Manager Artifacts
+      run: |
+        KERNEL_VERSION="${{ github.event.inputs.kernel_version }}"
+        BOOT_URL="${{ github.event.inputs.boot_input }}"
+        
+        # Download KSUD and Manager artifacts using the JavaScript script
+        node -e "
+          const github = require('@actions/github');
+          const fs = require('fs');
+          const fetch = require('node-fetch');
 
-    - name: Download boot file
-      uses: actions/download-artifact@v2
-      with:
-        name: ${{ steps.kernel_version.outputs.version }} # 使用input值作为文件名
+          async function downloadArtifact(url, filePath) {
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: { 'Authorization': `Bearer \${process.env.GITHUB_TOKEN}` }
+            });
+            const blob = await response.blob();
+            const arrayBuffer = await new Response(blob).arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            fs.writeFileSync(filePath, buffer);
+          }
 
-    - name: Download magiskboot
-      run: wget -O magiskboot https://example.com/magiskboot # 需要替换为实际的下载链接
+          async function getArtifacts() {
+            const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs');
+            const latestRunId = response.data.workflow_runs[0].id;
+            const artifactsResponse = await github.request('GET /repos/tiann/KernelSU/actions/runs/\${latestRunId}/artifacts');
+            const ksudArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name === 'ksud-x86_64-linux-android');
+            const managerArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name === 'manager');
+            await downloadArtifact(ksudArtifact.archive_download_url, 'ksud-x86_64-linux-android');
+            await downloadArtifact(managerArtifact.archive_download_url, 'manager');
+          }
 
-    - name: Download KernelSU ko file
-      uses: actions/github-script@v3
-      with:
-        script: |
-          const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs')
-          const latestRunId = response.data.workflow_runs[0].id
-          const artifactsResponse = await github.request('GET /repos/tiann/KernelSU/actions/runs/' + latestRunId + '/artifacts')
-          const artifactDownloadUrl = artifactsResponse.data.artifacts.find(artifact => artifact.name == '${{ steps.patched_file.outputs.patched_file }}').archive_download_url
-          await fetch(artifactDownloadUrl, { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` } })
-          .then(response => response.blob())
-          .then(blob => {
-            const fileReader = new FileReader()
-            fileReader.onload = event => {
-              require('fs').writeFileSync('${{ steps.patched_file.outputs.patched_file }}', Buffer.from(new Uint8Array(event.target.result)))
-            }
-            fileReader.readAsArrayBuffer(blob)
-          })
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Download ksud and manager
-      uses: actions/github-script@v3
-      with:
-        script: |
-          const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs')
-          const latestRunId = response.data.workflow_runs[0].id
-          const artifactsResponse = await github.request('GET /repos/tiann/KernelSU/actions/runs/' + latestRunId + '/artifacts')
-          const ksudArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name == 'ksud-x86_64-linux-android')
-          const managerArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name == 'manager')
-          const ksudDownloadUrl = ksudArtifact.archive_download_url
-          const managerDownloadUrl = managerArtifact.archive_download_url
-          await Promise.all([
-            fetch(ksudDownloadUrl, { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` } })
-            .then(response => response.blob())
-            .then(blob => {
-              const fileReader = new FileReader()
-              fileReader.onload = event => {
-                require('fs').writeFileSync('ksud-x86_64-linux-android', Buffer.from(new Uint8Array(event.target.result)))
-              }
-              fileReader.readAsArrayBuffer(blob)
-            }),
-            fetch(managerDownloadUrl, { method: 'GET', headers: { 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}` } })
-            .then(response => response.blob())
-            .then(blob => {
-              const fileReader = new FileReader()
-              fileReader.onload = event => {
-                require('fs').writeFileSync('manager', Buffer.from(new Uint8Array(event.target.result)))
-              }
-              fileReader.readAsArrayBuffer(blob)
-            })
-          ])
+          getArtifacts().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+        "
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
