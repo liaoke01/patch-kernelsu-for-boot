@@ -4,53 +4,58 @@ on:
   workflow_dispatch:
     inputs:
       kernel_version:
-        description: 'Enter the kernel version'
+        description: 'Kernel Version'
         default: 'android12-5.10'
-      boot_file_url:
-        description: 'Enter the URL to download the boot file'
+        required: true
+      boot_url:
+        description: 'URL to download the boot file'
         default: 'http://liaoke.link:5244/d/onedrive/boot.img'
+        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up kernel version input
-      id: kernel_version_input
-      run: echo "::set-output name=kernel_version::${{ github.event.inputs.kernel_version }}"
-
-    - name: Set up boot file URL input
-      id: boot_file_url_input
-      run: echo "::set-output name=boot_file_url::${{ github.event.inputs.boot_file_url }}"
+    - name: Set kernel version input
+      id: kernel_version
+      run: echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
 
     - name: Download boot file
-      run: wget -O boot ${{ steps.boot_file_url_input.outputs.boot_file_url }}
+      run: wget -P . ${{ github.event.inputs.boot_url }}
 
     - name: Download magiskboot
-      run: wget -O magiskboot https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
+      run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
-    - name: Get latest KernelSU build ID
-      id: get_kernelsu_build_id
+    - name: Get latest KernelSU build LKM workflow run ID
+      id: get_kernelsu_lkm_run_id
       run: |
-        latest_build_url="https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs/latest"
-        kernelsu_build_id=$(curl -s -X GET -H "Accept: application/vnd.github.v3+json" "$latest_build_url" | jq -r '.id')
-        echo "KERNELSU_BUILD_ID=$kernelsu_build_id" >>$GITHUB_ENV 
-        echo "KERNELSU_BUILD_ID is $KERNELSU_BUILD_ID
+        curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs" | \
+        jq -r '.workflow_runs | sort_by(.run_number) | last(.id)'
+
+    - name: Set KERNELSU_BUILD_ID environment variable
+      run: echo "KERNELSU_BUILD_ID=${{ steps.get_kernelsu_lkm_run_id.outputs.result }}" >>$GITHUB_ENV
 
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ $KERNELSU_BUILD_ID }}
-        name: ${{ steps.kernel_version_input.outputs.kernel_version }}_kernelsu.ko
+        workflow_run_id: ${{ env.KERNELSU_BUILD_ID }}
+        name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
+        path: .
 
-    - name: Get latest Manager build ID
-      id: get_manager_build_id
+    - name: Get latest KernelSU build manager workflow run ID
+      id: get_kernelsu_manager_run_id
       run: |
-        echo "::set-output name=manager_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs' | jq -r '.workflow_runs | sort_by(.created_at) | last |)"
+        curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs" | \
+        jq -r '.workflow_runs | sort_by(.run_number) | last(.id)'
+
+    - name: Set KERNELSU_MANAGER_BUILD_ID environment variable
+      run: echo "KERNELSU_MANAGER_BUILD_ID=${{ steps.get_kernelsu_manager_run_id.outputs.result }}" >>$GITHUB_ENV
 
     - name: Download ksud and manager files
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ steps.get_manager_build_id.outputs.manager_build_id }}
+        workflow_run_id: ${{ env.KERNELSU_MANAGER_BUILD_ID }}
         name: |
           ksud-x86_64-linux-android
           manager
+        path: .
