@@ -5,55 +5,52 @@ on:
       kernel_version:
         description: 'Enter the kernel version'
         required: true
-        default: ''
+        default: android12-5.10
       boot_input:
         description: 'Enter the boot file URL'
         required: true
-        default: ''
+        default: http://liaoke.link:5244/d/onedrive/boot.img
 
 jobs:
-  download_artifacts:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Download KSUD and Manager Artifacts
+    - name: Set kernel version and patch file name
       run: |
-        KERNEL_VERSION="${{ github.event.inputs.kernel_version }}"
-        BOOT_URL="${{ github.event.inputs.boot_input }}"
-        
-        # Download KSUD and Manager artifacts using the JavaScript script
-        node -e "
-          const github = require('@actions/github');
-          const fs = require('fs');
-          const fetch = require('node-fetch');
+        echo "KERNEL_VERSION=${{ github.event.inputs.kernel_version }}" >>$GITHUB_ENV
+        echo "PATCH_FILE=${{ github.event.inputs.kernel_version }}_kernelsu.ko" >>$GITHUB_ENV
 
-          async function downloadArtifact(url, filePath) {
-            const response = await fetch(url, {
-              method: 'GET',
-              headers: { 'Authorization': `Bearer \${process.env.GITHUB_TOKEN}` }
-            });
-            const blob = await response.blob();
-            const arrayBuffer = await new Response(blob).arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            fs.writeFileSync(filePath, buffer);
-          }
+    - name: Download boot file
+      run: wget ${{ github.event.inputs.boot_input }} -O boot
 
-          async function getArtifacts() {
-            const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs');
-            const latestRunId = response.data.workflow_runs[0].id;
-            const artifactsResponse = await github.request('GET /repos/tiann/KernelSU/actions/runs/\${latestRunId}/artifacts');
-            const ksudArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name === 'ksud-x86_64-linux-android');
-            const managerArtifact = artifactsResponse.data.artifacts.find(artifact => artifact.name === 'manager');
-            await downloadArtifact(ksudArtifact.archive_download_url, 'ksud-x86_64-linux-android');
-            await downloadArtifact(managerArtifact.archive_download_url, 'manager');
-          }
+    - name: Download magiskboot
+      run: wget https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot -O magiskboot
+      # Replace https://example.com/magiskboot with the actual download link for magiskboot
 
-          getArtifacts().catch(error => {
-            console.error(error);
-            process.exit(1);
-          });
-        "
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Get latest KernelSU build-lkm.yml action run ID
+      id: get_kernel_su_run_id
+      run: |
+        response=$(curl -s https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs)
+        latest_run_id=$(echo "$response" | jq -r '.workflow_runs[0].id')
+        echo "::set-output name=run_id::$latest_run_id"
+
+    - name: Download patch ko file
+      run: |
+        wget https://github.com/tiann/KernelSU/actions/runs/${{ steps.get_kernel_su_run_id.outputs.run_id }}/artifacts -O$PATCH_FILE
+
+    - name: Get latest KernelSU build-manager.yml action run ID
+      id: get_manager_run_id
+      run: |
+        response=$(curl -s https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs)
+        latest_run_id=$(echo "$response" | jq -r '.workflow_runs[0].id')
+        echo "::set-output name=run_id::$latest_run_id"
+
+    - name: Download ksud and manager
+      run: |
+        wget https://github.com/tiann/KernelSU/actions/runs/${{ steps.get_manager_run_id.outputs.run_id }}/artifacts -O ksud-x86_64-linux-android
+        wget https://github.com/tiann/KernelSU/actions/runs/${{ steps.get_manager_run_id.outputs.run_id }}/artifacts -O manager
+
+    # Add more steps as needed for your workflo
