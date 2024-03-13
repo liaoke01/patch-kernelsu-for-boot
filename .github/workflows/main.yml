@@ -1,62 +1,53 @@
-name: KernelSU Workflow
+name: Custom Workflow
 
 on:
   workflow_dispatch:
     inputs:
       kernel_version:
         description: 'Enter the kernel version'
-        default: 'default_kernel_version'
-        required: false
+        default: 'android12-5.10'
       boot_file_url:
-        description: 'URL to download the boot file'
-        default: 'default_boot_file_url'
-        required: false
+        description: 'Enter the URL to download the boot file'
+        default: 'http://liaoke.link:5244/d/onedrive/boot.img'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
+    - name: Set up kernel version input
+      id: kernel_version_input
+      run: echo "::set-output name=kernel_version::${{ github.event.inputs.kernel_version }}"
 
-    # Step 1: Download the boot file
-    - name: Download Boot File
-      uses: actions/download-artifact@v3
-      with:
-        url: ${{ github.event.inputs.boot_file_url }}
-        name: boot
+    - name: Set up boot file URL input
+      id: boot_file_url_input
+      run: echo "::set-output name=boot_file_url::${{ github.event.inputs.boot_file_url }}"
 
-    # Step 2: Download MagiskBoot
-    - name: Download MagiskBoot
+    - name: Download boot file
+      run: wget -O boot ${{ steps.boot_file_url_input.outputs.boot_file_url }}
+
+    - name: Download magiskboot
+      run: wget -O magiskboot https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
+
+    - name: Get latest KernelSU build ID
+      id: get_kernelsu_build_id
       run: |
-        wget https://github.com/topjohnwu/Magisk/releases/download/v24.3/Magisk-v24.3.zip
-        unzip Magisk-v24.3.zip -d Magisk
-        mv Magisk/magiskboot .
+        echo "::set-output name=kernelsu_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs' | jq -r '.workflow_runs[0].id')"
 
-    # Step 3: Download the patched ko file
-    - name: Get KernelSU Action Run ID
-      id: get_kernelsu_run_id
-      uses: octokit/request-action@v2.x
-      with:
-        route: GET /repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Download KernelSU ko File
+    - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ fromJson(steps.get_kernelsu_run_id.outputs.data).workflow_runs[0].id }}
-        name: ${{ github.event.inputs.kernel_version }}_kernelsu.ko
+        workflow_run_id: ${{ steps.get_kernelsu_build_id.outputs.kernelsu_build_id }}
+        name: ${{ steps.kernel_version_input.outputs.kernel_version }}_kernelsu.ko
 
-    # Step 4: Download ksud and manager
-    - name: Get Manager Action Run ID
-      id: get_manager_run_id
-      uses: octokit/request-action@v2.x
-      with:
-        route: GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Download ksud and manager
+    - name: Get latest Manager build ID
+      id: get_manager_build_id
+      run: |
+        echo "::set-output name=manager_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs' | jq -r '.workflow_runs[0].id')"
+
+    - name: Download ksud and manager files
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ fromJson(steps.get_manager_run_id.outputs.data).workflow_runs[0].id }}
-        name: ksud-x86_64-linux-android,manager
+        workflow_run_id: ${{ steps.get_manager_build_id.outputs.manager_build_id }}
+        name: |
+          ksud-x86_64-linux-android
+          manager
