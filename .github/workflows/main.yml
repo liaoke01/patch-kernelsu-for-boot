@@ -36,7 +36,7 @@ jobs:
       run: echo "KERNELSU_BUILD_ID=${{ steps.get_kernelsu_lkm_run_id.outputs.result }}" >>$GITHUB_ENV
 
     - name: Download KernelSU ko file
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         repository: tiann/KernelSU
         workflow_run_id: ${{ env.KERNELSU_BUILD_ID }}
@@ -53,7 +53,7 @@ jobs:
       run: echo "KERNELSU_MANAGER_BUILD_ID=${{ steps.get_kernelsu_manager_run_id.outputs.result }}" >>$GITHUB_ENV
 
     - name: Download ksud and manager files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         workflow_run_id: ${{ env.KERNELSU_MANAGER_BUILD_ID }}
         name: |
