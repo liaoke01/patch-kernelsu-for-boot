@@ -31,7 +31,7 @@ jobs:
     - name: Get latest KernelSU build ID
       id: get_kernelsu_build_id
       run: |
-        echo "::set-output name=kernelsu_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs' | jq -r '.workflow_runs[0].id')"
+        echo "::set-output name=kernelsu_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs' | jq -r '.workflow_runs | sort_by(.created_at) | last |)"
 
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
@@ -42,7 +42,7 @@ jobs:
     - name: Get latest Manager build ID
       id: get_manager_build_id
       run: |
-        echo "::set-output name=manager_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs' | jq -r '.workflow_runs[0].id')"
+        echo "::set-output name=manager_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs' | jq -r '.workflow_runs | sort_by(.created_at) | last |)"
 
     - name: Download ksud and manager files
       uses: actions/download-artifact@v3
