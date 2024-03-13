@@ -30,7 +30,7 @@ jobs:
       id: get_kernelsu_lkm_run_id
       run: |
         curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs" | \
-        jq -r '.workflow_runs | sort_by(.run_number) | last(.id)'
+        jq -r '.workflow_runs | sort_by(.run_number) | last|.id'
 
     - name: Set KERNELSU_BUILD_ID environment variable
       run: echo "KERNELSU_BUILD_ID=${{ steps.get_kernelsu_lkm_run_id.outputs.result }}" >>$GITHUB_ENV
@@ -46,7 +46,7 @@ jobs:
       id: get_kernelsu_manager_run_id
       run: |
         curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs" | \
-        jq -r '.workflow_runs | sort_by(.run_number) | last(.id)'
+        jq -r '.workflow_runs | sort_by(.run_number) | last|.id'
 
     - name: Set KERNELSU_MANAGER_BUILD_ID environment variable
       run: echo "KERNELSU_MANAGER_BUILD_ID=${{ steps.get_kernelsu_manager_run_id.outputs.result }}" >>$GITHUB_ENV
