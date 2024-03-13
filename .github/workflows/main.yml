@@ -34,6 +34,7 @@ jobs:
         latest_build_url="https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs/latest"
         kernelsu_build_id=$(curl -s -X GET -H "Accept: application/vnd.github.v3+json" "$latest_build_url" | jq -r '.id')
         echo "KERNELSU_BUILD_ID=$kernelsu_build_id" >>$GITHUB_ENV 
+        echo "KERNELSU_BUILD_ID is $KERNELSU_BUILD_ID
 
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
