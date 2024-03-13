@@ -1,14 +1,16 @@
-name: Custom Workflow
+name: KernelSU Workflow
 
 on:
   workflow_dispatch:
     inputs:
       kernel_version:
-        description: 'Kernel Version'
-        default: 'android12-5.10'
-      boot_file:
-        description: 'Boot File URL'
-        default: 'http://liaoke.link:5244/d/onedrive/boot.img'
+        description: 'Enter the kernel version'
+        default: 'default_kernel_version'
+        required: false
+      boot_file_url:
+        description: 'URL to download the boot file'
+        default: 'default_boot_file_url'
+        required: false
 
 jobs:
   build:
@@ -17,61 +19,44 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
-    # Download boot file from user input or default
+    # Step 1: Download the boot file
     - name: Download Boot File
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
-        url: ${{ github.event.inputs.boot_file }}
-        path: .
+        url: ${{ github.event.inputs.boot_file_url }}
+        name: boot
 
-    # Download magiskboot
-    - name: Download Magiskboot
-      run: wget -O magiskboot https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
+    # Step 2: Download MagiskBoot
+    - name: Download MagiskBoot
+      run: |
+        wget https://github.com/topjohnwu/Magisk/releases/download/v24.3/Magisk-v24.3.zip
+        unzip Magisk-v24.3.zip -d Magisk
+        mv Magisk/magiskboot .
 
-    # Download KernelSU ko file
-    - name: Get KernelSU ko File
-      id: get_ksu_artifact
-      uses: actions/github-script@v6
+    # Step 3: Download the patched ko file
+    - name: Get KernelSU Action Run ID
+      id: get_kernelsu_run_id
+      uses: octokit/request-action@v2.x
       with:
-        script: |
-          const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs?branch=main&event=push')
-          const latestRun = response.data.workflow_runs[0]
-          const artifactResponse = await github.request(`GET /repos/tiann/KernelSU/actions/runs/${latestRun.id}/artifacts?per_page=100`)
-          const artifact = artifactResponse.data.artifacts.find(a => a.name === `${context.payload.inputs.kernel_version}_kernelsu.ko`)
-          return {
-            artifact_id: artifact.id,
-            run_id: latestRun.id
-          }
-
-    - name: Download KernelSU ko Artifact
-      uses: actions/download-artifact@v2
+        route: GET /repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Download KernelSU ko File
+      uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ steps.get_ksu_artifact.outputs.run_id }}
-        artifact_name: ${{ github.event.inputs.kernel_version }}_kernelsu.ko
-        path: .
+        workflow_run_id: ${{ fromJson(steps.get_kernelsu_run_id.outputs.data).workflow_runs[0].id }}
+        name: ${{ github.event.inputs.kernel_version }}_kernelsu.ko
 
-    # Download ksud and manager files
-    - name: Get ksud and manager Artifacts
-      id: get_ksud_manager_artifact
-      uses: actions/github-script@v6
+    # Step 4: Download ksud and manager
+    - name: Get Manager Action Run ID
+      id: get_manager_run_id
+      uses: octokit/request-action@v2.x
       with:
-        script: |
-          const response = await github.request('GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs?branch=main&event=push')
-          const latestRun = response.data.workflow_runs[0]
-          return {
-            run_id: latestRun.id
-          }
-
-    - name: Download ksud Artifact
-      uses: actions/download-artifact@v2
+        route: GET /repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Download ksud and manager
+      uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ steps.get_ksud_manager_artifact.outputs.run_id }}
-        artifact_name: ksud-x86_64-linux-android
-        path: .
-
-    - name: Download manager Artifact
-      uses: actions/download-artifact@v2
-      with:
-        workflow_run_id: ${{ steps.get_ksud_manager_artifact.outputs.run_id }}
-        artifact_name: manager
-        path: .
+        workflow_run_id: ${{ fromJson(steps.get_manager_run_id.outputs.data).workflow_runs[0].id }}
+        name: ksud-x86_64-linux-android,manager
