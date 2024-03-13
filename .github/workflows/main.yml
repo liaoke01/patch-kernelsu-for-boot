@@ -38,6 +38,7 @@ jobs:
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
       with:
+        repository: tiann/KernelSU
         workflow_run_id: ${{ env.KERNELSU_BUILD_ID }}
         name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
         path: .
