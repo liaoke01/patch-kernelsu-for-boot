@@ -31,7 +31,9 @@ jobs:
     - name: Get latest KernelSU build ID
       id: get_kernelsu_build_id
       run: |
-        echo "::set-output name=kernelsu_build_id::$(curl -s 'https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs' | jq -r '.workflow_runs | sort_by(.created_at) | last |)"
+        latest_build_url="https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs/latest"
+        kernelsu_build_id=$(curl -s -X GET -H "Accept: application/vnd.github.v3+json" "$latest_build_url" | jq -r '.id')
+        echo "::set-output name=kernelsu_build_id::$kernelsu_build_id"
 
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
