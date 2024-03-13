@@ -33,12 +33,12 @@ jobs:
       run: |
         latest_build_url="https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs/latest"
         kernelsu_build_id=$(curl -s -X GET -H "Accept: application/vnd.github.v3+json" "$latest_build_url" | jq -r '.id')
-        echo "::set-output name=kernelsu_build_id::$kernelsu_build_id"
+        echo "KERNELSU_BUILD_ID=$kernelsu_build_id" >>$GITHUB_ENV 
 
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ steps.get_kernelsu_build_id.outputs.kernelsu_build_id }}
+        workflow_run_id: ${{ KERNELSU_BUILD_ID }}
         name: ${{ steps.kernel_version_input.outputs.kernel_version }}_kernelsu.ko
 
     - name: Get latest Manager build ID
