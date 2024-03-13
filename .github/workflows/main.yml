@@ -38,7 +38,7 @@ jobs:
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v3
       with:
-        workflow_run_id: ${{ KERNELSU_BUILD_ID }}
+        workflow_run_id: ${{ $KERNELSU_BUILD_ID }}
         name: ${{ steps.kernel_version_input.outputs.kernel_version }}_kernelsu.ko
 
     - name: Get latest Manager build ID
