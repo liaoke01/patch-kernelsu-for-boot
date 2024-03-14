@@ -36,16 +36,23 @@ jobs:
         name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
         path: .
 
-    - name: Download ksud and manager files
+    - name: Download ksud files
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
         branch: kmod
         workflow: build-manager.yml
         workflow_conclusion: success
-        name: |
-              ksud-x86_64-linux-android
-              manager
+        name: ksud-x86_64-linux-android
+        path: .
+    - name: Download manager files
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        repo: tiann/KernelSU
+        branch: kmod
+        workflow: build-manager.yml
+        workflow_conclusion: success
+        name: manager
         path: .
         
     - name: ls
