@@ -12,9 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Download boot file
-      run: wget -P . https://223-111-154-147.pd1.123pan.cn:30443/download-cdn.123pan.cn/123-268/f6684999/1812118708-0/f66849994544038fcb75fd71de147d0c/c-m26?v=5&t=1710471911&s=1710471911f775a329361b7234fb7342741907cf46&r=GP6FH4&bzc=1&bzs=1812077907&filename=boot.img&x-mf-biz-cid=28e90817-52a9-48ee-831d-4fd4e8c1cf49-47df1e&auto_redirect=0&ndcp=1&cache_type=1&xmfcid=4f19600d-e896-4174-be5a-bbaa3ea7e1c8-1-50111d3b1
-
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
@@ -28,9 +25,19 @@ jobs:
         name: ${{ inputs.kernel_version }}_kernelsu.ko
         path: .
 
-    - name: dojfk
+    - name: ksud
       run: wget https://github.com/liaoke01/patch-kernelsu-for-boot/blob/main/ksud
-
+      
+    - name: Download boot files
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        repo: liaoke01/BootIMGExtractAction
+        branch: main
+        workflow: BootIMGExtractAction.yml
+        workflow_conclusion: success
+        name: boot.img
+        path: .
+        
     - name: Download manager files
       uses: dawidd6/action-download-artifact@v3
       with:
