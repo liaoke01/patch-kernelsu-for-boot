@@ -43,7 +43,7 @@ jobs:
         branch: kmod
         workflow: build-manager.yml
         workflow_conclusion: success
-        name: ksud-x86_64-linux-android
+        name: ./ksud-x86_64-linux-android
         path: .
         
     - name: Download manager files
