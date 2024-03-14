@@ -60,6 +60,7 @@ jobs:
 
     - name: patch boot
       run: ./ksud boot-patch -b boot.img -m kernelsu.ko
+      shell: bash
 
     - uses: actions/checkout@v2
     - name: Upload APK and IMG files
