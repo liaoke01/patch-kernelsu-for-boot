@@ -36,24 +36,16 @@ jobs:
         name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
         path: .
 
-    - name: Download ksud files
+    - name: Download ksud and manager files
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
         branch: kmod
         workflow: build-manager.yml
         workflow_conclusion: success
-        name: ksud-x86_64-linux-android
-        path: .
-        
-    - name: Download manager files
-      uses: dawidd6/action-download-artifact@v3
-      with:
-        repo: tiann/KernelSU
-        branch: kmod
-        workflow: build-manager.yml
-        workflow_conclusion: success
-        name: manager
+        name: |
+              ksud-x86_64-linux-android
+              manager
         path: .
         
     - name: ls
@@ -61,4 +53,20 @@ jobs:
       
     - name: Move file 
       run: mv ./x86_64-linux-android/release/ksud .
+
+    - name: Set execute permissions 
+      run: | 
+             chmod +x ksud
+             chmod +x magiskboot
+
+    - name: patch boot
+      run: ksud boot-patch -b boot.img -m kernelsu.ko
+
+    - uses: actions/checkout@v2
+    - name: Upload APK and IMG files
+      uses: actions/upload-artifact@v2
+      with:
+        path: |
+          *.apk
+          *.img
       
