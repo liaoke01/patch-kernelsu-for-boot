@@ -59,7 +59,8 @@ jobs:
       run: | 
              chmod +x ./ksud
              chmod +x magiskboot
-             export PATH=$PATH:.
+             export PATH=$PATH:/home/runner/work/patch-kernelsu-for-boot/patch-kernelsu-for-boot
+             chmod 777 -R /home/runner/work/patch-kernelsu-for-boot/patch-kernelsu-for-boot
              source ~/.profile
 
     - name: patch boot
