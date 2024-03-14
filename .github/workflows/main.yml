@@ -48,11 +48,8 @@ jobs:
 
     - name: Set execute permissions
       run: |
-        chmod +x ./ksud
+        chmod +x ksud
         chmod +x magiskboot
-        export PATH=$PATH:/home/runner/work/patch-kernelsu-for-boot/patch-kernelsu-for-boot
-        chmod 777 -R /home/runner/work/patch-kernelsu-for-boot/patch-kernelsu-for-boot
-        source ~/.profile
-
+        
     - name: patch boot
       run: ksud boot-patch -b boot.img -m kernelsu.ko
