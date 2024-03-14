@@ -10,7 +10,7 @@ on:
       boot_url:
         description: 'URL to download the boot file'
         default: 'http://liaoke.link:5244/d/onedrive/boot.img'
-        required: true
+        required: false
 
 jobs:
   build:
