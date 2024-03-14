@@ -1,7 +1,7 @@
 name: Custom Workflow
 
 on:
-  workflow_dispatch:
+   workflow_dispatch:
     inputs:
       kernel_version:
         description: 'Kernel Version'
