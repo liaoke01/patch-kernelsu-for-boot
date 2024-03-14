@@ -64,7 +64,7 @@ jobs:
              source ~/.profile
 
     - name: patch boot
-      run: ./ksud boot-patch -b boot.img -m kernelsu.ko
+      run: sudo ksud boot-patch -b boot.img -m kernelsu.ko
 
     - uses: actions/checkout@v2
     - name: Upload APK and IMG files
