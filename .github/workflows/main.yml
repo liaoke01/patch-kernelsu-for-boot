@@ -20,9 +20,14 @@ jobs:
       id: kernel_version
       run: echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
 
-    - name: Download boot file
+    - name: Download boot file1
+      if: ${{ fromJSON/github.event.inputs.boot_url != '' }}
       run: wget -P . ${{ github.event.inputs.boot_url }}
 
+    - name: Download
+      if: ${{ fromJSON/github.event.inputs.boot_url == '' }}
+      run: 
+      
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
