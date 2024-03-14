@@ -16,9 +16,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Set kernel version input
-      id: kernel_version
-      run: echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
+    - name: Set kernel version input and env
+      id: kernel_version and env
+      run: |
+            echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
+            env: BOOT_URL: ${{ github.event.inputs.boot_url }}
 
     - name: Download boot file
       run: | 
@@ -34,7 +36,7 @@ jobs:
          name: boot.img 
          path: .
        fi 
-       env: BOOT_URL: ${{ github.event.inputs.boot_url }}
+       
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
