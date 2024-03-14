@@ -10,7 +10,7 @@ on:
       boot_url:
         description: 'URL to download the boot file'
         default: 'http://liaoke.link:5244/d/onedrive/boot.img'
-        required: false
+        required: true
 
 jobs:
   build:
@@ -23,20 +23,7 @@ jobs:
             env: BOOT_URL: ${{ github.event.inputs.boot_url }}
 
     - name: Download boot file
-      run: | 
-       if [ -n "$BOOT_URL" ]; then
-        wget -P . "$BOOT_URL" 
-       else 
-        uses: dawidd6/action-download-artifact@v3
-        with: 
-         repo: liaoke01/BootIMGExtractAction 
-         branch: main 
-         workflow: BootIMGExtractAction.yml 
-         workflow_conclusion: success 
-         name: boot.img 
-         path: .
-       fi 
-       
+      run: wget -P . "$BOOT_URL" 
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
