@@ -45,6 +45,7 @@ jobs:
         workflow_conclusion: success
         name: ksud-x86_64-linux-android
         path: .
+        
     - name: Download manager files
       uses: dawidd6/action-download-artifact@v3
       with:
