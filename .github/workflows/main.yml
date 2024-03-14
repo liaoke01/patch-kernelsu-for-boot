@@ -27,10 +27,12 @@ jobs:
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
     - name: Download KernelSU ko file
-      uses: actions/download-artifact@v2
+      uses: dawidd6/action-download-artifact@v3
       with:
-        repository: tiann/KernelSU
-        workflow_run_id: ${{ env.KERNELSU_BUILD_ID }}
+        repo: tiann/KernelSU
+        branch: kmod
+        workflow: build-lkm.yml
+        workflow_conclusion: success
         name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
         path: .
 
