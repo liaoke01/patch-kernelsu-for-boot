@@ -26,15 +26,6 @@ jobs:
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
-    - name: Get latest KernelSU build LKM workflow run ID
-      id: get_kernelsu_lkm_run_id
-      run: |
-        curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-lkm.yml/runs" | \
-        jq -r '.workflow_runs | sort_by(.run_number) | last|.id'
-
-    - name: Set KERNELSU_BUILD_ID environment variable
-      run: echo "KERNELSU_BUILD_ID=${{ steps.get_kernelsu_lkm_run_id.outputs.result }}" >>$GITHUB_ENV
-
     - name: Download KernelSU ko file
       uses: actions/download-artifact@v2
       with:
@@ -42,15 +33,6 @@ jobs:
         workflow_run_id: ${{ env.KERNELSU_BUILD_ID }}
         name: ${{ steps.kernel_version.outputs.version }}_kernelsu.ko
         path: .
-
-    - name: Get latest KernelSU build manager workflow run ID
-      id: get_kernelsu_manager_run_id
-      run: |
-        curl -s "https://api.github.com/repos/tiann/KernelSU/actions/workflows/build-manager.yml/runs" | \
-        jq -r '.workflow_runs | sort_by(.run_number) | last|.id'
-
-    - name: Set KERNELSU_MANAGER_BUILD_ID environment variable
-      run: echo "KERNELSU_MANAGER_BUILD_ID=${{ steps.get_kernelsu_manager_run_id.outputs.result }}" >>$GITHUB_ENV
 
     - name: Download ksud and manager files
       uses: actions/download-artifact@v2
