@@ -54,3 +54,5 @@ jobs:
         workflow_conclusion: success
         name: manager
         path: .
+    - name: ls
+      run: ls
