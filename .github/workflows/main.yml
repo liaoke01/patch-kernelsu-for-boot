@@ -7,23 +7,13 @@ on:
         description: 'Kernel Version'
         default: 'android12-5.10'
         required: true
-      boot_url:
-        description: 'URL to download the boot file'
-        default: 'http://liaoke.link:5244/d/onedrive/boot.img'
-        required: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Set kernel version input and env
-      id: kernel_version and env
-      run: |
-            echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
-            env: BOOT_URL: ${{ github.event.inputs.boot_url }}
-
     - name: Download boot file
-      run: wget -P . "$BOOT_URL" 
+      run: wget -P . http://liaoke.link:5244/d/onedrive/boot.img
+      
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
