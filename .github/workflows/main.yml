@@ -51,7 +51,9 @@ jobs:
       run: mv ./x86_64-linux-android/release/ksud .
       
     - name: ls
-      run: ls
+      run: |
+          ls
+          pwd
       
     - name: Set execute permissions 
       run: | 
