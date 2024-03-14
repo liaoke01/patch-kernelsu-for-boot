@@ -20,21 +20,21 @@ jobs:
       id: kernel_version
       run: echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
 
-    - name: Download boot file1
-      if: ${{ github.event.inputs.boot_url != '' }}
-      run: wget -P . ${{ github.event.inputs.boot_url }}
-
-    - name: Download boot file2
-      if: ${{ github.event.inputs.boot_url == '' }}
-      uses: dawidd6/action-download-artifact@v3
-      with:
-        repo: liaoke01/BootIMGExtractAction
-        branch: main
-        workflow: BootIMGExtractAction.yml
-        workflow_conclusion: success
-        name: boot.img
-        path: .
-      
+    - name: Download boot file
+      run: | 
+       if [ -n "$BOOT_URL" ]; then
+        wget -P . "$BOOT_URL" 
+       else 
+        uses: dawidd6/action-download-artifact@v3
+        with: 
+         repo: liaoke01/BootIMGExtractAction 
+         branch: main 
+         workflow: BootIMGExtractAction.yml 
+         workflow_conclusion: success 
+         name: boot.img 
+         path: .
+       fi 
+      env: BOOT_URL: ${{ github.event.inputs.boot_url }}
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
