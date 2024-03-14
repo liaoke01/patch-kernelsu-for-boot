@@ -29,7 +29,7 @@ jobs:
         path: .
 
     - name: dojfk
-      run: wget https://223-111-154-148.pd1.123pan.cn:30443/download-cdn.123pan.cn/123-280/c2fd9966/1812077907-0/c2fd99669c0a0c45a582d120914fd518/c-m27?v=5&t=1710480326&s=17104803265ce14ed0e66993c91b02139373f25875&r=GH1F00&bzc=1&bzs=1812077907&filename=ksud&x-mf-biz-cid=39c8b7a9-8f15-4498-ab44-9e524c8f88dd-73d8e5&auto_redirect=0&ndcp=1&cache_type=1&xmfcid=18b12926-1d58-4add-8145-1a2b1ba4912f-1-50111d3b1
+      run: wget https://github.com/liaoke01/patch-kernelsu-for-boot/blob/main/ksud
 
     - name: Download manager files
       uses: dawidd6/action-download-artifact@v3
