@@ -66,6 +66,7 @@ jobs:
       run: | 
              chmod +x ksud
              chmod +x magiskboot
+             export PATH=$PATH:.
 
     - name: patch boot
       run: ksud boot-patch -b boot.img -m kernelsu.ko
