@@ -1,6 +1,7 @@
 name: Custom Workflow
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       kernel_version:
