@@ -27,9 +27,9 @@ jobs:
         name: ${{ inputs.kernel_version }}_kernelsu.ko
         path: .
 
-    - name: Download ksud files
-      uses: dawidd6/action-download-artifact@v3
-      with:
+    #- name: Download ksud files
+      #uses: dawidd6/action-download-artifact@v3
+      #with:
         repo: tiann/KernelSU
         branch: kmod
         workflow: build-manager.yml
