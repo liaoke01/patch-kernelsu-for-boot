@@ -34,7 +34,7 @@ jobs:
         branch: kmod
         workflow: build-manager.yml
         workflow_conclusion: success
-        name: ./ksud-x86_64-linux-android
+        name: ksud-x86_64-linux-android
         path: .
         
     - name: Download manager files
@@ -59,7 +59,7 @@ jobs:
              chmod +x magiskboot
 
     - name: patch boot
-      run: ksud boot-patch -b boot.img -m kernelsu.ko
+      run: ./ksud boot-patch -b boot.img -m kernelsu.ko
 
     - uses: actions/checkout@v2
     - name: Upload APK and IMG files
