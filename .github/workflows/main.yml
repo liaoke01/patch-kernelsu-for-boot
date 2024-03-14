@@ -40,10 +40,7 @@ jobs:
         workflow_conclusion: success
         name: manager
         path: .
-
-    - name: Move file
-      run: mv ./x86_64-linux-android/release/ksud .
-
+        
     - name: ls
       run: |
         ls
