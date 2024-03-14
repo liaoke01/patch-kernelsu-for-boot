@@ -55,12 +55,11 @@ jobs:
       
     - name: Set execute permissions 
       run: | 
-             chmod +x ksud
+             chmod +x ./ksud
              chmod +x magiskboot
 
     - name: patch boot
       run: ./ksud boot-patch -b boot.img -m kernelsu.ko
-      shell: bash
 
     - uses: actions/checkout@v2
     - name: Upload APK and IMG files
