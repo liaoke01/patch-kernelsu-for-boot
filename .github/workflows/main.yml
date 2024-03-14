@@ -34,7 +34,7 @@ jobs:
          name: boot.img 
          path: .
        fi 
-      env: BOOT_URL: ${{ github.event.inputs.boot_url }}
+       env: BOOT_URL: ${{ github.event.inputs.boot_url }}
     - name: Download magiskboot
       run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
 
