@@ -52,4 +52,4 @@ jobs:
         chmod +x magiskboot
         
     - name: patch boot
-      run: ksud boot-patch -b boot.img -m kernelsu.ko
+      run: ./ksud boot-patch -b boot.img -m kernelsu.ko
