@@ -21,11 +21,11 @@ jobs:
       run: echo "::set-output name=version::${{ github.event.inputs.kernel_version }}"
 
     - name: Download boot file1
-      if: ${{ fromJSON/github.event.inputs.boot_url != '' }}
+      if: ${{ github.event.inputs.boot_url != '' }}
       run: wget -P . ${{ github.event.inputs.boot_url }}
 
     - name: Download boot file2
-      if: ${{ fromJSON/github.event.inputs.boot_url == '' }}
+      if: ${{ github.event.inputs.boot_url == '' }}
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: liaoke01/BootIMGExtractAction
