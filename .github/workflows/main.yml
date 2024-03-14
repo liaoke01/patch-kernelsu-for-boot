@@ -27,16 +27,7 @@ jobs:
         name: ${{ inputs.kernel_version }}_kernelsu.ko
         path: .
 
-    #- name: Download ksud files
-      #uses: dawidd6/action-download-artifact@v3
-      #with:
-        #repo: tiann/KernelSU
-        #branch: kmod
-        #workflow: build-manager.yml
-        #workflow_conclusion: success
-        #name: ksud-x86_64-linux-android
-        #path: .
-     - name: download
+     - name: dojfk
        run: wget https://github.com/liaoke01/patch-kernelsu-for-boot/blob/main/ksud
         
     - name: Download manager files
