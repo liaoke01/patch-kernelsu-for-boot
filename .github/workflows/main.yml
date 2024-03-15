@@ -58,9 +58,10 @@ jobs:
         name: manager
         path: .
 
-    - name: Set execute permissions and rename
+    - name: Set execute permissions and move
       run: |
         ls
+        mv aarch64-unknown-linux-gnu/release/ksud .
         chmod +x ksud
         chmod +x magiskboot
         
