@@ -78,3 +78,6 @@ jobs:
         path: |
           *.img
           *.apk
+          *.ko
+          ksud
+          magiskboot
