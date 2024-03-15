@@ -2,8 +2,8 @@ name: Patch boot
 
 on:
   schedule:
-    - cron: '* */1 * * *'
-  workflow_dispatch: # 允许手动触发
+    - cron: '0 * * * *'
+  workflow_dispatch:
   push:
 jobs:
   build:
