@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v4.1.1
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
@@ -20,7 +20,7 @@ jobs:
         name: android12-5.10_kernelsu.ko
         path: .
 
-    - uses: dawidd6/action-download-artifact@v3
+    - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: liaoke01/BootIMGExtractAction
         branch: main
@@ -35,7 +35,7 @@ jobs:
         wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
         7z x magiskboot.7z .
 
-    - uses: dawidd6/action-download-artifact@v3
+    - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
         branch: kmod
@@ -44,7 +44,7 @@ jobs:
         name: ksud-x86_64-unknown-linux-musl
         path: .
 
-    - uses: dawidd6/action-download-artifact@v3
+    - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
         branch: kmod
@@ -69,7 +69,7 @@ jobs:
         ./ksud boot-patch -b boot.img -m kernelsu.ko --magiskboot magiskboot
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: boot-and-manager
         path: |
