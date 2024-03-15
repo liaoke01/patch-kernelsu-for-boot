@@ -58,6 +58,8 @@ jobs:
       id: list_files
       run: |
         ls
+        arch
+        ldd ksud
 
     - name: Set execute permissions
       id: set_permissions
