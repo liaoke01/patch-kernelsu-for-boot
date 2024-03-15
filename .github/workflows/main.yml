@@ -44,7 +44,7 @@ jobs:
     - name: Download ksud files
       uses: dawidd6/action-download-artifact@v3
       with:
-        repo: liaoke01/KernelsuSU
+        repo: liaoke01/KernelSU
         branch: kmod
         workflow: build-ksud.yml
         workflow_conclusion: success
