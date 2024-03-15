@@ -41,11 +41,11 @@ jobs:
     - name: Download ksud files
       uses: dawidd6/action-download-artifact@v3
       with:
-        repo: liaoke01/KernelSU
+        repo: tiann/KernelSU
         branch: kmod
         workflow: build-ksud.yml
         workflow_conclusion: success
-        name: ksud-x86_64-unknown-linux-gnu 
+        name: ksud-x86_64-unknown-linux-musl
         path: .
      
     - name: Download manager files
