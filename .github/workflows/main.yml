@@ -33,7 +33,12 @@ jobs:
         workflow_conclusion: success
         name: boot.img
         path: .
-        
+
+    - name: Download magiskboot
+      run: |
+            sudo apt-get update && sudo apt-get install p7zip-full
+            wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/download/latest/magiskboot.7z
+            7z x magiskboot.7z .
     - name: Download ksud files
       uses: dawidd6/action-download-artifact@v3
       with:
