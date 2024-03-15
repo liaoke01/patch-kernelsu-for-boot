@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: '0 */12 * * *' # 每隔12小时运行一次
   workflow_dispatch: # 允许手动触发
-
+  push:
 jobs:
   build:
     runs-on: ubuntu-latest
