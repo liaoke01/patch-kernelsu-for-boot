@@ -4,12 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      kernel_version:
-        description: 'Kernel Version'
-        default: 'android12-5.10'
-        required: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,7 +28,7 @@ jobs:
         branch: kmod
         workflow: build-lkm.yml
         workflow_conclusion: success
-        name: ${{ inputs.kernel_version }}_kernelsu.ko
+        name: android12-5.10_kernelsu.ko
         path: .
       
     - name: Download boot files
