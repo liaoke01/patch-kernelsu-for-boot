@@ -63,7 +63,7 @@ jobs:
 
     - name: Set execute permissions and rename
       run: |
-        ls
+        ls /aarch64-unknown-linux-gnu/release/
         mv /aarch64-unknown-linux-gnu/release/ksud .
         ls
         chmod +x ksud
