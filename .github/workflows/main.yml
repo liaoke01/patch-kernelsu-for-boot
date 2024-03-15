@@ -63,7 +63,6 @@ jobs:
 
     - name: Set execute permissions and rename
       run: |
-        mv android12-5.10_kernelsu.ko kernelsu.ko
         mv /aarch64-unknown-linux-gnu/release/ksud .
         ls
         chmod +x ksud
