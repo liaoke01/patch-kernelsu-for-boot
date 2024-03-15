@@ -10,14 +10,15 @@ on:
 
 jobs:
   build:
-    runs-on: actuated-aarch64
+    runs-on: ubuntu-latest
     steps:
-    - name: Download magiskboot
-      id: download_magiskboot
-      run: wget -P . https://github.com/magojohnji/magiskboot-linux/blob/main/x86_64/magiskboot
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        fetch-depth: 1
 
     - name: Download KernelSU ko file
-      id: download_kernelsu_ko
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
@@ -26,13 +27,8 @@ jobs:
         workflow_conclusion: success
         name: ${{ inputs.kernel_version }}-lkm
         path: .
-
-    - name: ksud
-      id: download_ksud
-      run: wget https://github.com/liaoke01/patch-kernelsu-for-boot/blob/main/ksud
       
     - name: Download boot files
-      id: download_boot_files
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: liaoke01/BootIMGExtractAction
@@ -41,10 +37,8 @@ jobs:
         workflow_conclusion: success
         name: boot.img
         path: .
-      
-
+        
     - name: Download manager files
-      id: download_manager_files
       uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
@@ -54,18 +48,17 @@ jobs:
         name: manager
         path: .
 
-    - name: ls
-      id: list_files
-      run: |
-        ls
-        arch
-        ldd ksud
-
-    - name: Set execute permissions
-      id: set_permissions
+    - name: Set execute permissions and rename
       run: |
         chmod +x ksud
-
+        chmod +x magiskboot
+        mv android12-5.10_kernelsu.ko kernelsu.ko
+        
     - name: patch boot
-      id: patch_boot
-      run: ./ksud boot-patch -b boot.img -m kernelsu.ko
+      run: |
+        file ksud
+        file magiskboot
+        file boot.img
+        file kernelsu.ko
+        file init
+        ./ksud boot-patch -b boot.img -m kernelsu.ko -i init --magiskboot magiskboot
