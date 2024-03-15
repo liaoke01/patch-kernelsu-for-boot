@@ -71,6 +71,6 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: android-images-and-apks
+        name: boot-and-manager
         path: |
           *.img
