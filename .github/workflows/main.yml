@@ -16,10 +16,7 @@ jobs:
 
     - name: Download magiskboot
       run: |
-       wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
-       sudo apt update
-       sudo apt install p7zip p7zip-full p7zip-rar
-       7z x magiskboot.7z out/arm64-v8/magiskboot
+       wget https://github.com/magojohnji/magiskboot-linux/blob/main/arm64-v8a/magiskboot
        
     - name: Download KernelSU ko file
       uses: dawidd6/action-download-artifact@v3
