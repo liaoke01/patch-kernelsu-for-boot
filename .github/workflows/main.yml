@@ -12,6 +12,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        fetch-depth: 1
+
     - name: Download KernelSU ko file
       uses: dawidd6/action-download-artifact@v3
       with:
