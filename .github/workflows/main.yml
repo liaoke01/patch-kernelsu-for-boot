@@ -22,7 +22,7 @@ jobs:
         branch: kmod
         workflow: build-lkm.yml
         workflow_conclusion: success
-        name: ${{ inputs.kernel_version }}_kernelsu.ko
+        name: ${{ inputs.kernel_version }}_kernelsu.lkm
         path: .
 
     - name: ksud
