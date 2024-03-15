@@ -1,21 +1,16 @@
 name: Patch boot
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *' # 每隔12小时运行一次
+  workflow_dispatch: # 允许手动触发
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-        fetch-depth: 1
 
-    - name: Download KernelSU ko file
-      uses: dawidd6/action-download-artifact@v3
+    steps:
+    - uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
         branch: kmod
@@ -23,9 +18,8 @@ jobs:
         workflow_conclusion: success
         name: android12-5.10_kernelsu.ko
         path: .
-      
-    - name: Download boot files
-      uses: dawidd6/action-download-artifact@v3
+
+    - uses: dawidd6/action-download-artifact@v3
       with:
         repo: liaoke01/BootIMGExtractAction
         branch: main
@@ -36,12 +30,11 @@ jobs:
 
     - name: Download magiskboot
       run: |
-            sudo apt-get update && sudo apt-get install p7zip-full
-            wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
-            7z x magiskboot.7z .
-            
-    - name: Download ksud files
-      uses: dawidd6/action-download-artifact@v3
+        sudo apt-get update && sudo apt-get install p7zip-full
+        wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
+        7z x magiskboot.7z .
+
+    - uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
         branch: kmod
@@ -49,9 +42,8 @@ jobs:
         workflow_conclusion: success
         name: ksud-x86_64-unknown-linux-musl
         path: .
-     
-    - name: Download manager files
-      uses: dawidd6/action-download-artifact@v3
+
+    - uses: dawidd6/action-download-artifact@v3
       with:
         repo: tiann/KernelSU
         branch: kmod
@@ -66,8 +58,8 @@ jobs:
         mv x86_64-unknown-linux-musl/release/ksud .
         chmod +x ksud
         chmod +x magiskboot
-        
-    - name: patch boot
+
+    - name: Patch boot
       run: |
         file ksud
         file magiskboot
@@ -75,10 +67,9 @@ jobs:
         file kernelsu.ko
         ./ksud boot-patch -b boot.img -m kernelsu.ko --magiskboot magiskboot
 
-     - name: Upload artifacts
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         name: android-images-and-apks
         path: |
           *.img
-          *.apk
