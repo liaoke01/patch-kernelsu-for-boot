@@ -24,6 +24,7 @@ jobs:
        sudo apt update
        sudo apt install p7zip p7zip-full p7zip-rar
        7z x magiskboot.7z out/arm64-v8/magiskboot
+       
     - name: Download KernelSU ko file
       uses: dawidd6/action-download-artifact@v3
       with:
@@ -66,9 +67,11 @@ jobs:
 
     - name: Set execute permissions and rename
       run: |
+        ls
         chmod +x ksud
         chmod +x magiskboot
         mv android12-5.10_kernelsu.ko kernelsu.ko
+        mv /aarch64-unknown-linux-gnu/release/ksud .
         
     - name: patch boot
       run: |
