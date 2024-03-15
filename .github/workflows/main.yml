@@ -18,6 +18,8 @@ jobs:
         submodules: 'true'
         fetch-depth: 1
 
+    - name: Download magiskboot
+      run: wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
     - name: Download KernelSU ko file
       uses: dawidd6/action-download-artifact@v3
       with:
