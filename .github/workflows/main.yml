@@ -74,3 +74,11 @@ jobs:
         file boot.img
         file kernelsu.ko
         ./ksud boot-patch -b boot.img -m kernelsu.ko --magiskboot magiskboot
+
+     - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-images-and-apks
+        path: |
+          *.img
+          *.apk
