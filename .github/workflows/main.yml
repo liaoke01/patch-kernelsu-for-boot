@@ -74,3 +74,4 @@ jobs:
         name: boot-and-manager
         path: |
           *.img
+          *.apk
