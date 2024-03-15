@@ -12,12 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-        fetch-depth: 1
-
     - name: Download KernelSU ko file
       uses: dawidd6/action-download-artifact@v3
       with:
@@ -60,5 +54,4 @@ jobs:
         file magiskboot
         file boot.img
         file kernelsu.ko
-        file init
-        ./ksud boot-patch -b boot.img -m kernelsu.ko -i init --magiskboot magiskboot
+        ./ksud boot-patch -b boot.img -m kernelsu.ko --magiskboot magiskboot
