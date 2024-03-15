@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4.1.1
-    - name: Artifact downloader
-      uses: bettermarks/action-artifact-download@0.5.1
-      with: 
-       repo: tiann/KernelSU
-       token: ${{ secrets.GITHUB_TOKEN }}
-       artifact_name: android12-5.10_kernelsu.ko
-       wait_seconds: 60 
+    - uses: dawidd6/action-download-artifact@v3.1.2
+      with:
+        repo: tiann/KernelSU
+        branch: kmod
+        workflow: build-lkm.yml
+        workflow_conclusion: success
+        name: android12-5.10_kernelsu.ko
+        path: .
             
 
     - uses: dawidd6/action-download-artifact@v3.1.2
