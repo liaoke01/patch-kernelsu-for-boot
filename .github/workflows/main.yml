@@ -16,7 +16,7 @@ jobs:
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
-        branch: ci
+        branch: main
         workflow: build-lkm.yml
         workflow_conclusion: success
         name: android12-5.10_lkm
@@ -41,7 +41,7 @@ jobs:
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
-        branch: ci
+        branch: main
         workflow: build-ksud.yml
         workflow_conclusion: success
         name: ksud-x86_64-unknown-linux-musl
@@ -50,7 +50,7 @@ jobs:
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
-        branch: ci
+        branch: main
         workflow: build-manager.yml
         workflow_conclusion: success
         name: manager
