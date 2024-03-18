@@ -19,7 +19,7 @@ jobs:
         branch: main
         workflow: build-lkm.yml
         workflow_conclusion: success
-        name: android12-5.10_lkm
+        name: android12-5.10-lkm
         path: .
             
 
