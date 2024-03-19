@@ -13,9 +13,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4.1.1
 
+    - name: Setup Python
+      uses: actions/setup-python@v5.0.0
+            
     - name: install packages
       run: |
-        apt update&&apt install tree&&apt install python3
+        sudo apt-get update && sudo apt-get install trees
 
     - name: build magiskboot
       run: |
