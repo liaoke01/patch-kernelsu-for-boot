@@ -80,7 +80,7 @@ jobs:
         file magiskboot
         file boot.img
         file kernelsu.ko
-        ./ksud boot-patch -b boot.img --magiskboot magiskboot
+        ./ksud boot-patch -b boot.img -m android12-5.10-ko --magiskboot magiskboot
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4.3.1
