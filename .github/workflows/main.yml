@@ -41,11 +41,10 @@ jobs:
 
     - name: Download magiskboot
       run: |
-        sudo apt-get update && sudo apt-get install p7zip-full
         wget https://github.com/xiaoxindada/magiskboot_ndk_on_linux/releases/latest/download/magiskboot.7z
-        7z x magiskboot.7z .
-        tree
-
+        pip install py7zr
+        ./1.py
+        
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
