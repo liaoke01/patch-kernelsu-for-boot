@@ -12,7 +12,19 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4.1.1
-            
+
+    - name: install packages
+      run: |
+        apt update&&apt install tree&&apt install python3
+
+    -name: build magiskboot
+     run: |
+         git clone --recurse-submodules https://github.com/xiaoxindada/magiskboot_ndk_on_linux.git
+         cd magiskboot_ndk_on_linux
+         pip3 install wget
+         python3 ./build.py --build_binary
+         tree
+       
     - uses: dawidd6/action-download-artifact@v3.1.2
       with:
         repo: tiann/KernelSU
