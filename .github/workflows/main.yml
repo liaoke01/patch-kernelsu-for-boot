@@ -68,8 +68,8 @@ jobs:
 
     - name: Set execute permissions and move
       run: |
-        ls
         mv x86_64-unknown-linux-musl/release/ksud .
+        mv out/x86_64/magiskboot .
         chmod +x ksud
         chmod +x magiskboot
 
