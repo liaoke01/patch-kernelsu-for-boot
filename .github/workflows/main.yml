@@ -73,6 +73,7 @@ jobs:
 
     - name: Patch boot
       run: |
+        tree
         file ksud
         file magiskboot
         file boot.img
