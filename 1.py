@@ -1,11 +1,17 @@
+import os
 import py7zr
 
-# 替换为你的7z文件路径
-archive_path = 'magiskboot.7z'
+# 获取当前工作目录
+current_directory = os.getcwd()
 
-# 替换为你想要解压到的目录路径
-extract_path = './'
+# 设置7z文件的路径
+archive_path = os.path.join(current_directory, 'magiskboot.7z')
 
-# 打开7z文件并解压
+# 设置解压路径（当前目录）
+extract_path = current_directory
+
+# 使用py7zr解压文件
 with py7zr.SevenZipFile(archive_path, 'r') as z:
     z.extractall(extract_path)
+
+print(f"文件已解压到: {extract_path}")
