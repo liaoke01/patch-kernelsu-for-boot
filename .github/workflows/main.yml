@@ -52,7 +52,7 @@ jobs:
       with:
         repo: tiann/KernelSU
         branch: main
-        workflow: build-ksud.yml
+        workflow: build-manager.yml
         workflow_conclusion: success
         name: ksud-x86_64-unknown-linux-musl
         path: .
